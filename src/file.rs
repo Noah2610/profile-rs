@@ -8,7 +8,7 @@ const ALIAS_PREFIX: &str = "@";
 #[derive(Deserialize, Clone, Debug)]
 #[serde(try_from = "&str")]
 pub enum File {
-    File(PathBuf),
+    Files(Vec<PathBuf>),
     Alias(String),
 }
 
@@ -19,12 +19,24 @@ impl TryFrom<&str> for File {
         if s.starts_with(ALIAS_PREFIX) {
             Ok(File::Alias(s.to_string()))
         } else {
-            let path = PathBuf::from(s);
-            if path.exists() {
-                Ok(File::File(path))
-            } else {
-                Err(Error::FileNotFound(s.to_string()))
+            let mut files = Vec::new();
+            // let path = PathBuf::from(s);
+            for entry in glob::glob(s)
+                .map_err(|e| Error::GlobError(s.to_string(), e.to_string()))?
+            {
+                let path = entry.map_err(|e| {
+                    Error::GlobError(s.to_string(), e.to_string())
+                })?;
+                if path.exists() {
+                    files.push(path);
+                } else {
+                    return Err(Error::FileNotFound(
+                        path.as_os_str().to_str().unwrap().to_string(),
+                    ));
+                }
             }
+
+            Ok(File::Files(files))
         }
     }
 }
@@ -35,9 +47,9 @@ pub fn expand_files<'a>(
 ) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
 
-    for file_or_alias in file_list.into_iter() {
-        match file_or_alias {
-            File::File(path) => files.push(path.clone()),
+    for file_or_alias in file_list.iter() {
+        match &file_or_alias {
+            File::Files(paths) => files.append(&mut paths.clone()),
             File::Alias(alias) => files.append(&mut expand_files(
                 aliases
                     .get(&alias)

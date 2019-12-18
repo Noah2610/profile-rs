@@ -14,6 +14,7 @@ pub enum Error {
     ConfigParseError(String, String),
     FileNotFound(String),
     AliasNotFound(String),
+    GlobError(String, String),
 }
 
 impl Error {
@@ -29,6 +30,9 @@ impl Error {
             Error::FileNotFound(file) => format!("File not found: {}", file),
             Error::AliasNotFound(alias) => {
                 format!("Alias is not defined: {}", alias)
+            }
+            Error::GlobError(pattern, msg) => {
+                format!("Invalid glob pattern: {}\n{}", pattern, msg)
             }
         }
     }

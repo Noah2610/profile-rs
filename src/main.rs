@@ -2,6 +2,7 @@
 extern crate serde;
 extern crate clap;
 extern crate dirs;
+extern crate glob;
 extern crate regex;
 extern crate serde_regex;
 extern crate structopt;
