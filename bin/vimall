@@ -1,0 +1,4 @@
+#!/bin/bash
+files=("README.md" "Cargo.toml")
+mapfile -t files_find < <( find src/ -iname "*.rs" )
+$EDITOR "${files[@]}" "${files_find[@]}"
