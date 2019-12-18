@@ -9,6 +9,7 @@ extern crate toml;
 
 mod config;
 mod error;
+mod file;
 mod meta;
 mod opts;
 
@@ -28,8 +29,14 @@ fn run() -> error::Result<()> {
     let config = config::Config::new()?;
     dbg!(&config);
 
-    let opt = opts::Opts::new();
-    dbg!(&opt);
+    let opts = opts::Opts::new();
+    dbg!(&opts);
+
+    // let files = if !opts.files.is_empty() {
+    //     // opts.files
+    // } else {
+    //     // config.files.default
+    // };
 
     Ok(())
 }

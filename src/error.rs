@@ -12,6 +12,7 @@ pub enum Error {
     NoConfig,
     ConfigReadError(String, String),
     ConfigParseError(String, String),
+    FileNotFound(String),
 }
 
 impl Error {
@@ -24,6 +25,7 @@ impl Error {
             Error::ConfigParseError(file, msg) => {
                 format!("Error parsing config file: {}\n{}", file, msg)
             }
+            Error::FileNotFound(file) => format!("File not found: {}", file),
         }
     }
 }
