@@ -1,4 +1,4 @@
-# profilers (working title)
+# profile-rs (working title)
 Goal of the project:  
 An improved version of my old [Ruby script][profilerb]
 
@@ -27,8 +27,6 @@ set not-on-laptop
 # PROFILE_END
 ```
 
-To un-comment the line on a `laptop` profile, and comment-out the line on any other profile.
-
 ### Command-Line Usage
 ```
 # Run with default profile and files (maybe disallow default files?)
@@ -53,7 +51,7 @@ $ profilers --profile main .bashrc .vimrc
 
 # Run on the given files, with the 'main' and 'onedisp' profiles
 $ profilers -p main -p onedisp .bashrc .vimrc
-$ profilers --profile main .bashrc .vimrc
+$ profilers --profile main --profile onedisp .bashrc .vimrc
 
 # Don't modify any files
 $ profilers -n **/.*rc
@@ -80,7 +78,7 @@ Config file under `~/.config/profilers/config.toml`
 ```toml
 [keywords]
 # For single-line profile encapsulation
-single = "/^\s*#\s*PROFILE\s*=\s*(?P<expr>)$/"
+single = '/^\s*#\s*PROFILE\s*=\s*(?P<expr>)$/'
 # The named capture group `expr` will be parsed as the expression,
 # which evaluates to a boolean.
 # Expression would be something like ...
@@ -91,8 +89,8 @@ single = "/^\s*#\s*PROFILE\s*=\s*(?P<expr>)$/"
 #   set only-on-desktop
 
 # For multi-line profile encapsulation
-block_start = "/^\s*#\s*PROFILE_START\s*=\s*(?P<expr>)$/"
-block_end = "/^\s*#\s*PROFILE_END\s*$/"
+block_start = '/^\s*#\s*PROFILE_START\s*=\s*(?P<expr>)$/'
+block_end = '/^\s*#\s*PROFILE_END\s*$/'
 # Example in a config file ...
 #   # PROFILE_START = !laptop && desktop
 #   set not-on-laptop
