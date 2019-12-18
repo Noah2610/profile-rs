@@ -31,7 +31,7 @@ default = [
 # above, by prefixing strings with `@`
 [files.aliases]
 vim = ["~/.vimrc", "~/.config/nvim/init.vim"]
-i3 = "~/.config/i3"
+i3 = ["~/.config/i3"]
 
 [profiles]
 # By default, the machine's hostname is used as the profile.

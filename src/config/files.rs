@@ -7,10 +7,10 @@ pub struct FilesConfig {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Aliases(HashMap<String, Vec<File>>);
+pub struct Aliases(HashMap<String, File>);
 
 impl Aliases {
-    pub fn get(&self, name: &str) -> Option<&Vec<File>> {
+    pub fn get(&self, name: &str) -> Option<&File> {
         self.0.get(name)
     }
 }

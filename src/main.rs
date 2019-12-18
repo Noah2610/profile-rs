@@ -27,13 +27,15 @@ fn main() {
 }
 
 fn run() -> error::Result<()> {
+    use file::File;
+
     let config = config::Config::new()?;
     dbg!(&config);
 
     let opts = opts::Opts::new();
     dbg!(&opts);
 
-    let files = file::expand_files(&opts.files, &config.files.aliases);
+    let files = file::expand_files(&opts.files.into(), &config.files.aliases);
 
     dbg!(&files);
 
