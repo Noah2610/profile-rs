@@ -4,6 +4,11 @@ use crate::ALIAS_PREFIX;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 
+mod expand_settings;
+
+pub use expand_settings::ExpandSettings;
+pub use expand_settings::ExpandSettingsBuilder;
+
 #[derive(Deserialize, Clone, Debug)]
 // #[serde(try_from = "&str")]
 #[serde(try_from = "Vec<&str>")]
@@ -93,16 +98,19 @@ impl From<Vec<FileList>> for FileList {
 pub fn expand_files<'a>(
     file_list: &'a FileList,
     aliases: &'a Aliases,
+    settings: &'a ExpandSettings,
 ) -> Result<Vec<PathBuf>> {
     let mut file_paths = Vec::new();
 
     match &file_list {
         FileList::File(path) => file_paths.push(path.clone()),
+
         FileList::Files(files) => {
             for file in files {
-                file_paths.append(&mut expand_files(&*file, aliases)?)
+                file_paths.append(&mut expand_files(&*file, aliases, settings)?)
             }
         }
+
         FileList::Dir(dir_path) => {
             for file_path_res in dir_path.read_dir().map_err(|e| {
                 Error::FsReadError(
@@ -120,16 +128,22 @@ pub fn expand_files<'a>(
                     .path();
                 if file_path.is_file() {
                     file_paths.push(file_path)
-                } else {
-                    // TODO recurse if option is set.
+                } else if file_path.is_dir() && settings.recurse {
+                    file_paths.append(&mut expand_files(
+                        &FileList::Dir(file_path),
+                        aliases,
+                        settings,
+                    )?)
                 }
             }
         }
+
         FileList::Alias(alias) => file_paths.append(&mut expand_files(
             aliases
                 .get(&alias)
                 .ok_or(Error::AliasNotFound(alias.to_string()))?,
             aliases,
+            settings,
         )?),
     }
 

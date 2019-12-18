@@ -1,4 +1,6 @@
 #[macro_use]
+extern crate derive_builder;
+#[macro_use]
 extern crate serde;
 extern crate clap;
 extern crate dirs;
@@ -29,11 +31,12 @@ fn main() {
 }
 
 fn run() -> error::Result<()> {
-    let config = config::Config::new()?;
-    dbg!(&config);
+    use file_list::{expand_files, ExpandSettings};
 
     let opts = opts::Opts::new();
     dbg!(&opts);
+
+    let config = config::Config::new()?;
 
     let files = if !opts.files.is_empty() {
         opts.files.into()
@@ -44,7 +47,14 @@ fn run() -> error::Result<()> {
         panic!("TODO");
     };
 
-    let files = file_list::expand_files(&files, &config.files.aliases)?;
+    let files = expand_files(
+        &files,
+        &config.files.aliases,
+        &ExpandSettings::builder()
+            .recurse(opts.recurse)
+            .build()
+            .unwrap(),
+    )?;
 
     dbg!(&files);
 
