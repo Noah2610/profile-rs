@@ -1,9 +1,8 @@
 use crate::config::Aliases;
 use crate::error::prelude::*;
+use crate::ALIAS_PREFIX;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-
-const ALIAS_PREFIX: &str = "@";
 
 #[derive(Deserialize, Clone, Debug)]
 // #[serde(try_from = "&str")]
@@ -12,6 +11,16 @@ pub enum FileList {
     File(PathBuf),
     Files(Vec<Box<FileList>>),
     Alias(String),
+}
+
+impl FileList {
+    pub fn is_empty(&self) -> bool {
+        match self {
+            FileList::File(_) => false,
+            FileList::Files(files) => files.is_empty(),
+            FileList::Alias(_) => false,
+        }
+    }
 }
 
 impl TryFrom<Vec<&str>> for FileList {

@@ -14,6 +14,8 @@ mod file_list;
 mod meta;
 mod opts;
 
+const ALIAS_PREFIX: &str = "@";
+
 fn main() {
     use std::process::exit;
 
@@ -33,8 +35,16 @@ fn run() -> error::Result<()> {
     let opts = opts::Opts::new();
     dbg!(&opts);
 
-    let files =
-        file_list::expand_files(&opts.files.into(), &config.files.aliases);
+    let files = if !opts.files.is_empty() {
+        opts.files.into()
+    } else if !config.files.default.is_empty() {
+        config.files.default.into()
+    } else {
+        // TODO
+        panic!("TODO");
+    };
+
+    let files = file_list::expand_files(&files, &config.files.aliases)?;
 
     dbg!(&files);
 
