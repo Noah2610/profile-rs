@@ -28,6 +28,11 @@ set not-on-laptop
 ```
 
 ### Command-Line Usage
+<details>
+<summary>
+Possible command-line usage mockup ...
+</summary>
+
 ```
 # Run with default profile and files (maybe disallow default files?)
 $ profilers
@@ -60,66 +65,22 @@ $ profilers --no-modify **/.*rc
 # Print info about what's happening to stderr
 $ profilers -v .bashrc .vimrc
 $ profilers --verbose .bashrc .vimrc
-  Running on profile 'profile-name'
-  Modifiying './.bashrc'
-  Modifiying './.vimrc'
+Running on profile 'profile-name'
+Modifiying './.bashrc'
+Modifiying './.vimrc'
 
 # Combine -n and -v
 $ profilers -nv .bashrc .vimrc
-  Running on profile 'profile-name'
-  Modifiying './.bashrc'
-  Modifiying './.vimrc'
-  Performing no modifications on filesystem...
+Running on profile 'profile-name'
+Modifiying './.bashrc'
+Modifiying './.vimrc'
+Performing no modifications on filesystem...
 ```
+</details>
 
 ### Configuration
-Config file under `~/.config/profilers/config.toml`
-
-```toml
-[keywords]
-# For single-line profile encapsulation
-single = '/^\s*#\s*PROFILE\s*=\s*(?P<expr>)$/'
-# The named capture group `expr` will be parsed as the expression,
-# which evaluates to a boolean.
-# Expression would be something like ...
-#   desktop
-#   !desktop && laptop
-# Example in a config file ...
-#   # PROFILE = desktop
-#   set only-on-desktop
-
-# For multi-line profile encapsulation
-block_start = '/^\s*#\s*PROFILE_START\s*=\s*(?P<expr>)$/'
-block_end = '/^\s*#\s*PROFILE_END\s*$/'
-# Example in a config file ...
-#   # PROFILE_START = !laptop && desktop
-#   set not-on-laptop
-#   set on-desktop-not-laptop
-#   # PROFILE_END
-
-[files]
-# Aliases for filepaths. Can be used on the command-line or in the `default` key
-# below, by prefixing strings with `@`
-aliases = {
-    vim = ["~/.vimrc", "~/.config/nvim/init.vim"],
-    i3 = "~/.config/i3",
-}
-
-# Default config files to run on, if no files were given as arguments
-default = [
-    "~/.bashrc",
-    "@vim",
-    "~/.config/i3/config",
-]
-
-[profiles]
-# By default, the machine's hostname is used as the profile.
-# If the hostname appears as a key in this table (`profiles.hostnames`),
-# then the associated value is used as the profile / profiles.
-hostnames = {
-    aware-desktop = "aware-desktop",  # This should be redundant, as the hostname is the default profile
-    laptop = ["laptop", "onedisp"],
-}
-```
+Config file should be located under `~/.config/profilers/config.toml`.  
+See the [default `config.toml` file][config].
 
 [profilerb]: https://github.com/Noah2610/profile.rb
+[config]:    ./config.toml
