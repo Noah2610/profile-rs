@@ -4,8 +4,12 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
-#[derive(Deserialize)]
-pub struct Config {}
+mod keywords;
+
+#[derive(Deserialize, Debug)]
+pub struct Config {
+    keywords: keywords::ConfigKeywords,
+}
 
 impl Config {
     pub fn new() -> Result<Self> {

@@ -2,6 +2,8 @@
 extern crate serde;
 extern crate clap;
 extern crate dirs;
+extern crate regex;
+extern crate serde_regex;
 extern crate structopt;
 extern crate toml;
 
@@ -24,6 +26,7 @@ fn main() {
 
 fn run() -> error::Result<()> {
     let config = config::Config::new()?;
+    dbg!(&config);
 
     let opt = opts::Opts::new();
     dbg!(&opt);
