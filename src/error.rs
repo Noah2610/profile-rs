@@ -13,6 +13,7 @@ pub enum Error {
     ConfigReadError(String, String),
     ConfigParseError(String, String),
     FileNotFound(String),
+    AliasNotFound(String),
 }
 
 impl Error {
@@ -26,6 +27,9 @@ impl Error {
                 format!("Error parsing config file: {}\n{}", file, msg)
             }
             Error::FileNotFound(file) => format!("File not found: {}", file),
+            Error::AliasNotFound(alias) => {
+                format!("Alias is not defined: {}", alias)
+            }
         }
     }
 }
@@ -35,6 +39,6 @@ impl std::error::Error for Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ERROR:\n{}\nExiting.", self.message())
+        write!(f, "{}", self.message())
     }
 }

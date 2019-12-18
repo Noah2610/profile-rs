@@ -1,7 +1,7 @@
 use regex::Regex;
 
 #[derive(Deserialize, Debug)]
-pub struct ConfigKeywords {
+pub struct KeywordsConfig {
     #[serde(with = "serde_regex")]
     single: Regex,
     #[serde(with = "serde_regex")]

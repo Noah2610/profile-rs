@@ -19,7 +19,7 @@ fn main() {
     match run() {
         Ok(_) => (),
         Err(e) => {
-            eprintln!("{}", e);
+            eprintln!("Error:\n{}\nExiting.", e);
             exit(1);
         }
     }
@@ -32,11 +32,9 @@ fn run() -> error::Result<()> {
     let opts = opts::Opts::new();
     dbg!(&opts);
 
-    // let files = if !opts.files.is_empty() {
-    //     // opts.files
-    // } else {
-    //     // config.files.default
-    // };
+    let files = file::expand_files(&opts.files, &config.files.aliases);
+
+    dbg!(&files);
 
     Ok(())
 }

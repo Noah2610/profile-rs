@@ -4,11 +4,16 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
+mod files;
 mod keywords;
+
+pub use files::{Aliases, FilesConfig};
+pub use keywords::KeywordsConfig;
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
-    keywords: keywords::ConfigKeywords,
+    pub keywords: KeywordsConfig,
+    pub files:    FilesConfig,
 }
 
 impl Config {
