@@ -1,4 +1,4 @@
-use crate::file::File;
+use crate::file_list::FileList;
 use crate::meta;
 use std::convert::TryFrom;
 use structopt::StructOpt;
@@ -24,8 +24,8 @@ pub struct Opts {
     /// Files to modify.
     /// If directories are passed, then all of their files are modified (non-recursively).
     /// If the -r option is given, then recursively modify all files in the given directories.
-    #[structopt(name = "FILES", parse(try_from_str = File::try_from))]
-    pub files: Vec<File>,
+    #[structopt(name = "FILES", parse(try_from_str = FileList::try_from))]
+    pub files: Vec<FileList>,
 }
 
 impl Opts {

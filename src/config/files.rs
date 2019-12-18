@@ -1,4 +1,4 @@
-use crate::file::File;
+use crate::file_list::FileList;
 use std::collections::HashMap;
 
 #[derive(Deserialize, Debug)]
@@ -7,10 +7,10 @@ pub struct FilesConfig {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Aliases(HashMap<String, File>);
+pub struct Aliases(HashMap<String, FileList>);
 
 impl Aliases {
-    pub fn get(&self, name: &str) -> Option<&File> {
+    pub fn get(&self, name: &str) -> Option<&FileList> {
         self.0.get(name)
     }
 }

@@ -8,13 +8,13 @@ const ALIAS_PREFIX: &str = "@";
 #[derive(Deserialize, Clone, Debug)]
 // #[serde(try_from = "&str")]
 #[serde(try_from = "Vec<&str>")]
-pub enum File {
+pub enum FileList {
     File(PathBuf),
-    Files(Vec<Box<File>>),
+    Files(Vec<Box<FileList>>),
     Alias(String),
 }
 
-impl TryFrom<Vec<&str>> for File {
+impl TryFrom<Vec<&str>> for FileList {
     type Error = Error;
 
     fn try_from(v: Vec<&str>) -> Result<Self> {
@@ -22,11 +22,11 @@ impl TryFrom<Vec<&str>> for File {
         for s in v {
             files.push(Box::new(Self::try_from(s)?));
         }
-        Ok(File::Files(files))
+        Ok(FileList::Files(files))
     }
 }
 
-impl TryFrom<&str> for File {
+impl TryFrom<&str> for FileList {
     type Error = Error;
 
     fn try_from(s: &str) -> Result<Self> {
@@ -37,7 +37,7 @@ impl TryFrom<&str> for File {
         };
 
         if s.starts_with(ALIAS_PREFIX) {
-            Ok(File::Alias(s.to_string()))
+            Ok(FileList::Alias(s.to_string()))
         } else {
             let mut files = Vec::new();
             for entry in glob::glob(s.as_str())
@@ -47,7 +47,7 @@ impl TryFrom<&str> for File {
                     Error::GlobError(s.to_string(), e.to_string())
                 })?;
                 if path.exists() {
-                    files.push(Box::new(File::File(path)));
+                    files.push(Box::new(FileList::File(path)));
                 } else {
                     return Err(Error::FileNotFound(
                         path.as_os_str().to_str().unwrap().to_string(),
@@ -58,38 +58,38 @@ impl TryFrom<&str> for File {
             if files.is_empty() {
                 Err(Error::FileNotFound(s.to_string()))
             } else {
-                Ok(File::Files(files))
+                Ok(FileList::Files(files))
             }
         }
     }
 }
 
-impl Into<Vec<File>> for File {
-    fn into(self) -> Vec<File> {
+impl Into<Vec<FileList>> for FileList {
+    fn into(self) -> Vec<FileList> {
         vec![self]
     }
 }
 
-impl From<Vec<File>> for File {
-    fn from(files: Vec<File>) -> Self {
-        File::Files(files.into_iter().map(|f| Box::new(f)).collect())
+impl From<Vec<FileList>> for FileList {
+    fn from(files: Vec<FileList>) -> Self {
+        FileList::Files(files.into_iter().map(|f| Box::new(f)).collect())
     }
 }
 
 pub fn expand_files<'a>(
-    file_list: &'a File,
+    file_list: &'a FileList,
     aliases: &'a Aliases,
 ) -> Result<Vec<PathBuf>> {
     let mut file_paths = Vec::new();
 
     match &file_list {
-        File::File(path) => file_paths.push(path.clone()),
-        File::Files(files) => {
+        FileList::File(path) => file_paths.push(path.clone()),
+        FileList::Files(files) => {
             for file in files {
                 file_paths.append(&mut expand_files(&*file, aliases)?)
             }
         }
-        File::Alias(alias) => file_paths.append(&mut expand_files(
+        FileList::Alias(alias) => file_paths.append(&mut expand_files(
             aliases
                 .get(&alias)
                 .ok_or(Error::AliasNotFound(alias.to_string()))?,

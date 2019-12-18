@@ -10,7 +10,7 @@ extern crate toml;
 
 mod config;
 mod error;
-mod file;
+mod file_list;
 mod meta;
 mod opts;
 
@@ -27,15 +27,14 @@ fn main() {
 }
 
 fn run() -> error::Result<()> {
-    use file::File;
-
     let config = config::Config::new()?;
     dbg!(&config);
 
     let opts = opts::Opts::new();
     dbg!(&opts);
 
-    let files = file::expand_files(&opts.files.into(), &config.files.aliases);
+    let files =
+        file_list::expand_files(&opts.files.into(), &config.files.aliases);
 
     dbg!(&files);
 
