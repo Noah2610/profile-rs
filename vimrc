@@ -1,1 +1,1 @@
-nmap <leader>r :!cargo run<CR>
+nmap <leader>r :!cargo run --<space>
