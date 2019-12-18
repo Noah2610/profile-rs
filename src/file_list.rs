@@ -10,15 +10,16 @@ use std::path::PathBuf;
 pub enum FileList {
     File(PathBuf),
     Files(Vec<Box<FileList>>),
+    Dir(PathBuf),
     Alias(String),
 }
 
 impl FileList {
     pub fn is_empty(&self) -> bool {
-        match self {
-            FileList::File(_) => false,
-            FileList::Files(files) => files.is_empty(),
-            FileList::Alias(_) => false,
+        if let FileList::Files(files) = self {
+            files.is_empty()
+        } else {
+            false
         }
     }
 }
@@ -56,7 +57,11 @@ impl TryFrom<&str> for FileList {
                     Error::GlobError(s.to_string(), e.to_string())
                 })?;
                 if path.exists() {
-                    files.push(Box::new(FileList::File(path)));
+                    if path.is_file() {
+                        files.push(Box::new(FileList::File(path)));
+                    } else if path.is_dir() {
+                        files.push(Box::new(FileList::Dir(path)));
+                    }
                 } else {
                     return Err(Error::FileNotFound(
                         path.as_os_str().to_str().unwrap().to_string(),
@@ -96,6 +101,28 @@ pub fn expand_files<'a>(
         FileList::Files(files) => {
             for file in files {
                 file_paths.append(&mut expand_files(&*file, aliases)?)
+            }
+        }
+        FileList::Dir(dir_path) => {
+            for file_path_res in dir_path.read_dir().map_err(|e| {
+                Error::FsReadError(
+                    dir_path.as_os_str().to_str().unwrap().to_string(),
+                    e.to_string(),
+                )
+            })? {
+                let file_path = file_path_res
+                    .map_err(|e| {
+                        Error::FsReadError(
+                            dir_path.as_os_str().to_str().unwrap().to_string(),
+                            e.to_string(),
+                        )
+                    })?
+                    .path();
+                if file_path.is_file() {
+                    file_paths.push(file_path)
+                } else {
+                    // TODO recurse if option is set.
+                }
             }
         }
         FileList::Alias(alias) => file_paths.append(&mut expand_files(

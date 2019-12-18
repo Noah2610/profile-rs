@@ -13,6 +13,7 @@ pub enum Error {
     ConfigReadError(String, String),
     ConfigParseError(String, String),
     FileNotFound(String),
+    FsReadError(String, String),
     AliasNotFound(String),
     GlobError(String, String),
 }
@@ -28,6 +29,9 @@ impl Error {
                 format!("Error parsing config file: {}\n{}", file, msg)
             }
             Error::FileNotFound(file) => format!("File not found: {}", file),
+            Error::FsReadError(dir, msg) => {
+                format!("File system read error: {}\n{}", dir, msg)
+            }
             Error::AliasNotFound(alias) => {
                 format!("Alias is not defined: {}", alias)
             }
