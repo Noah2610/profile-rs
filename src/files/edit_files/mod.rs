@@ -6,6 +6,7 @@ pub mod prelude {
 
 mod settings;
 
+use crate::context::Verbosity;
 use crate::error::prelude::*;
 use settings::EditSettings;
 use std::path::PathBuf;
@@ -16,7 +17,13 @@ pub fn edit_files<'a>(
 ) -> Result<()> {
     for file_path in files.iter() {
         if file_path.is_file() {
-
+            settings.verbosity.print_at(
+                Verbosity::Debug,
+                format!(
+                    "Checking file {}...",
+                    file_path.as_os_str().to_str().unwrap()
+                ),
+            );
         } else {
             return Err(Error::FileNotFound(
                 file_path.as_os_str().to_str().unwrap().to_string(),

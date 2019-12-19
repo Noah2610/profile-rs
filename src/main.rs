@@ -52,6 +52,7 @@ fn run() -> error::Result<()> {
         &files,
         EditSettings::builder()
             .keywords(&context.config.keywords)
+            .verbosity(context.verbosity.clone())
             .build()
             .unwrap(),
     )?;

@@ -1,5 +1,5 @@
 #[derive(Default, Builder)]
-#[builder(setter(into))]
+#[builder(pattern = "owned", setter(into))]
 pub struct ExpandSettings {
     #[builder(default)]
     pub recurse: bool,

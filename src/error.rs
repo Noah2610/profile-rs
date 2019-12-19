@@ -1,3 +1,4 @@
+use crate::context::Verbosity;
 use std::fmt;
 
 pub mod prelude {
@@ -17,6 +18,7 @@ pub enum Error {
     AliasNotFound(String),
     GlobError(String, String),
     NoFiles,
+    InvalidVerbosity(u8),
 
     UnkownError(String),
 }
@@ -45,6 +47,13 @@ impl Error {
                 "No files given. Pass files as arguments or set the \
                  [files.default] value in the config"
             ),
+            Error::InvalidVerbosity(n) => format!(
+                "Invalid verbosity level: {}\nVerbosity can only go from {} \
+                 to {}",
+                n,
+                Verbosity::MIN,
+                Verbosity::MAX,
+            ),
 
             Error::UnkownError(msg) => msg.to_string(),
         }
@@ -60,8 +69,8 @@ impl fmt::Display for Error {
     }
 }
 
-impl From<String> for Error {
-    fn from(s: String) -> Self {
-        Error::UnkownError(s)
+impl<S: Into<String>> From<S> for Error {
+    fn from(s: S) -> Self {
+        Error::UnkownError(s.into())
     }
 }
