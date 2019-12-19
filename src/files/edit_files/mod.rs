@@ -23,10 +23,18 @@ pub fn edit_files<'a>(
                 Verbosity::Info,
                 format!("Checking file '{}'", file_name),
             );
+            edit_file(file_path, &settings)?;
         } else {
             return Err(Error::FileNotFound(file_name.to_string()));
         }
     }
 
+    Ok(())
+}
+
+fn edit_file<'a>(
+    file_path: &'a PathBuf,
+    settings: &'a EditSettings,
+) -> Result<()> {
     Ok(())
 }
