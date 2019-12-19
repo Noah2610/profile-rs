@@ -13,7 +13,7 @@ extern crate toml;
 mod config;
 mod context;
 mod error;
-mod file_list;
+mod files;
 mod meta;
 mod opts;
 
@@ -32,7 +32,7 @@ fn main() {
 }
 
 fn run() -> error::Result<()> {
-    use file_list::{expand_files, ExpandSettings};
+    use files::{expand_files, ExpandSettings};
 
     let context = context::ContextBuilder::default()
         .opts(opts::Opts::new())

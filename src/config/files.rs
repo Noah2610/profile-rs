@@ -1,4 +1,4 @@
-use crate::file_list::FileList;
+use crate::files::FileList;
 use crate::ALIAS_PREFIX;
 use std::collections::HashMap;
 

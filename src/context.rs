@@ -1,6 +1,6 @@
 use crate::config::Config;
 use crate::error::prelude::*;
-use crate::file_list::FileList;
+use crate::files::FileList;
 use crate::opts::Opts;
 
 #[derive(Builder)]
