@@ -18,9 +18,9 @@ pub fn edit_files<'a>(
     for file_path in files.iter() {
         if file_path.is_file() {
             settings.verbosity.print_at(
-                Verbosity::Debug,
+                Verbosity::Info,
                 format!(
-                    "Checking file {}...",
+                    "Checking file '{}'",
                     file_path.as_os_str().to_str().unwrap()
                 ),
             );

@@ -43,6 +43,7 @@ fn run() -> error::Result<()> {
         context.files()?,
         &context.config.files.aliases,
         &ExpandSettings::builder()
+            .verbosity(context.verbosity)
             .recurse(context.opts.recurse)
             .build()
             .unwrap(),
@@ -52,7 +53,7 @@ fn run() -> error::Result<()> {
         &files,
         EditSettings::builder()
             .keywords(&context.config.keywords)
-            .verbosity(context.verbosity.clone())
+            .verbosity(context.verbosity)
             .build()
             .unwrap(),
     )?;

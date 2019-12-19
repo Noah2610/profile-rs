@@ -1,7 +1,7 @@
 use crate::error::prelude::*;
 use std::convert::TryFrom;
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum Verbosity {
     Quiet = 0,
     Info  = 1,
@@ -17,10 +17,11 @@ impl Verbosity {
         S: std::fmt::Display,
         V: Into<Verbosity>,
     {
+        let min_verbosity = min_verbosity.into();
         let current = self.value();
-        let min = min_verbosity.into().value();
+        let min = min_verbosity.value();
         if current >= min {
-            println!("{}", msg);
+            println!("{} {}", min_verbosity.name(), msg);
         }
     }
 
@@ -29,6 +30,14 @@ impl Verbosity {
             Verbosity::Quiet => 0,
             Verbosity::Info => 1,
             Verbosity::Debug => 2,
+        }
+    }
+
+    fn name(&self) -> &str {
+        match self {
+            Verbosity::Quiet => "[QUIET]",
+            Verbosity::Info => "[INFO]",
+            Verbosity::Debug => "[DEBUG]",
         }
     }
 }
