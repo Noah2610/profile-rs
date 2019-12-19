@@ -5,6 +5,7 @@ extern crate serde;
 extern crate clap;
 extern crate dirs;
 extern crate glob;
+extern crate hostname;
 extern crate regex;
 extern crate serde_regex;
 extern crate structopt;
@@ -16,6 +17,7 @@ mod error;
 mod files;
 mod meta;
 mod opts;
+mod profiles;
 
 const ALIAS_PREFIX: &str = "@";
 
@@ -38,6 +40,9 @@ fn run() -> error::Result<()> {
         .opts(opts::Opts::new())
         .config(config::Config::new()?)
         .build()?;
+
+    let profiles = context.profiles()?;
+    dbg!(&profiles);
 
     let files = expand_files(
         context.files()?,

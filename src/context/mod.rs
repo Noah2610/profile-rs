@@ -6,6 +6,7 @@ use crate::config::Config;
 use crate::error::prelude::*;
 use crate::files::FileList;
 use crate::opts::Opts;
+use crate::profiles::prelude::*;
 use std::convert::TryFrom;
 
 #[derive(Builder)]
@@ -31,6 +32,11 @@ impl Context {
                 }
             })
             .ok_or(Error::NoFiles)
+    }
+
+    pub fn profiles(&self) -> Result<&Profiles> {
+        self.opts.profile.as_ref().ok_or_else(hostname::get)?;
+        unimplemented!()
     }
 }
 

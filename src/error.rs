@@ -69,8 +69,8 @@ impl fmt::Display for Error {
     }
 }
 
-impl<S: Into<String>> From<S> for Error {
+impl<S: Display> From<S> for Error {
     fn from(s: S) -> Self {
-        Error::UnkownError(s.into())
+        Error::UnkownError(format!("{}", s))
     }
 }
