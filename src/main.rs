@@ -32,7 +32,7 @@ fn main() {
 }
 
 fn run() -> error::Result<()> {
-    use files::{expand_files, ExpandSettings};
+    use files::{edit_files, expand_files, EditSettings, ExpandSettings};
 
     let context = context::ContextBuilder::default()
         .opts(opts::Opts::new())
@@ -48,7 +48,13 @@ fn run() -> error::Result<()> {
             .unwrap(),
     )?;
 
-    dbg!(&files);
+    edit_files(
+        &files,
+        EditSettings::builder()
+            .keywords(&context.config.keywords)
+            .build()
+            .unwrap(),
+    )?;
 
     Ok(())
 }

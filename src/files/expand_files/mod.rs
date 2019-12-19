@@ -1,12 +1,16 @@
+pub mod prelude {
+    pub use super::expand_files;
+    pub use super::settings::ExpandSettings;
+    pub use super::settings::ExpandSettingsBuilder;
+}
+
 mod settings;
 
 use super::FileList;
 use crate::config::Aliases;
 use crate::error::prelude::*;
+use settings::ExpandSettings;
 use std::path::PathBuf;
-
-pub use settings::ExpandSettings;
-pub use settings::ExpandSettingsBuilder;
 
 pub fn expand_files<'a>(
     file_list: &'a FileList,

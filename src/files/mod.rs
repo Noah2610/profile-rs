@@ -1,13 +1,13 @@
+mod edit_files;
 mod expand_files;
+
+pub use edit_files::prelude::*;
+pub use expand_files::prelude::*;
 
 use crate::error::prelude::*;
 use crate::ALIAS_PREFIX;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-
-pub use expand_files::expand_files;
-pub use expand_files::ExpandSettings;
-pub use expand_files::ExpandSettingsBuilder;
 
 #[derive(Deserialize, Clone, Debug)]
 // #[serde(try_from = "&str")]
