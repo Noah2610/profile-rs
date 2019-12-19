@@ -33,7 +33,8 @@ pub fn expand_files<'a>(
         }
 
         FileList::Dir(dir_path) => {
-            let dir_name = dir_path.as_os_str().to_str().unwrap();
+            let dir_name =
+                dir_path.to_str().ok_or("PathBuf to string failed")?;
             settings.verbosity.print_at(
                 Verbosity::Debug,
                 format!("Including directory '{}'", dir_name),
@@ -44,10 +45,7 @@ pub fn expand_files<'a>(
             })? {
                 let file_path = file_path_res
                     .map_err(|e| {
-                        Error::FsReadError(
-                            dir_path.as_os_str().to_str().unwrap().to_string(),
-                            e.to_string(),
-                        )
+                        Error::FsReadError(dir_name.to_string(), e.to_string())
                     })?
                     .path();
                 if file_path.is_file() {
@@ -94,7 +92,7 @@ impl FilePaths {
         let path = path.into();
         self.verbosity.print_at(
             Verbosity::Debug,
-            format!("Including file '{}'", path.as_os_str().to_str().unwrap()),
+            format!("Including file '{}'", path.to_str().unwrap()),
         );
         self.paths.push(path);
     }

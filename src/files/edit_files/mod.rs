@@ -16,18 +16,15 @@ pub fn edit_files<'a>(
     settings: EditSettings,
 ) -> Result<()> {
     for file_path in files.iter() {
+        let file_name = file_path.to_str().ok_or("PathBuf to string failed")?;
+
         if file_path.is_file() {
             settings.verbosity.print_at(
                 Verbosity::Info,
-                format!(
-                    "Checking file '{}'",
-                    file_path.as_os_str().to_str().unwrap()
-                ),
+                format!("Checking file '{}'", file_name),
             );
         } else {
-            return Err(Error::FileNotFound(
-                file_path.as_os_str().to_str().unwrap().to_string(),
-            ));
+            return Err(Error::FileNotFound(file_name.to_string()));
         }
     }
 
