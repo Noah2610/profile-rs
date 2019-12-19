@@ -2,13 +2,13 @@ use crate::file_list::FileList;
 use crate::ALIAS_PREFIX;
 use std::collections::HashMap;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct FilesConfig {
     pub default: FileList,
     pub aliases: Aliases,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct Aliases(HashMap<String, FileList>);
 
 impl Aliases {

@@ -10,7 +10,7 @@ mod keywords;
 pub use files::{Aliases, FilesConfig};
 pub use keywords::KeywordsConfig;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct Config {
     pub keywords: KeywordsConfig,
     pub files:    FilesConfig,

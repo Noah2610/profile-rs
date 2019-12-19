@@ -3,8 +3,11 @@ use crate::meta;
 use std::convert::TryFrom;
 use structopt::StructOpt;
 
-#[derive(StructOpt, Debug)]
-#[structopt(version = meta::VERSION, name = meta::NAME)]
+#[derive(Clone, StructOpt, Debug)]
+#[structopt(
+    name = meta::NAME,
+    version = meta::VERSION,
+)]
 pub struct Opts {
     /// Verbosity. Use multiple options for increased verbosity,
     /// example: -v, -vv, -vvv, etc.
@@ -24,8 +27,12 @@ pub struct Opts {
     /// Files to modify.
     /// If directories are passed, then all of their files are modified (non-recursively).
     /// If the -r option is given, then recursively modify all files in the given directories.
-    #[structopt(name = "FILES", parse(try_from_str = FileList::try_from))]
-    pub files: Vec<FileList>,
+    #[structopt(
+        name = "FILES",
+        multiple = true,
+        parse(try_from_str = FileList::try_from),
+    )]
+    pub files: Option<FileList>,
 }
 
 impl Opts {

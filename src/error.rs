@@ -16,6 +16,9 @@ pub enum Error {
     FsReadError(String, String),
     AliasNotFound(String),
     GlobError(String, String),
+    NoFiles,
+
+    UnkownError(String),
 }
 
 impl Error {
@@ -38,6 +41,12 @@ impl Error {
             Error::GlobError(pattern, msg) => {
                 format!("Invalid glob pattern: {}\n{}", pattern, msg)
             }
+            Error::NoFiles => format!(
+                "No files given. Pass files as arguments or set the \
+                 [files.default] value in the config"
+            ),
+
+            Error::UnkownError(msg) => msg.to_string(),
         }
     }
 }
@@ -48,5 +57,11 @@ impl std::error::Error for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.message())
+    }
+}
+
+impl From<String> for Error {
+    fn from(s: String) -> Self {
+        Error::UnkownError(s)
     }
 }

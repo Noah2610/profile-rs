@@ -1,13 +1,13 @@
-use crate::config::Aliases;
+mod expand_files;
+
 use crate::error::prelude::*;
 use crate::ALIAS_PREFIX;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 
-mod expand_settings;
-
-pub use expand_settings::ExpandSettings;
-pub use expand_settings::ExpandSettingsBuilder;
+pub use expand_files::expand_files;
+pub use expand_files::ExpandSettings;
+pub use expand_files::ExpandSettingsBuilder;
 
 #[derive(Deserialize, Clone, Debug)]
 // #[serde(try_from = "&str")]
@@ -17,14 +17,15 @@ pub enum FileList {
     Files(Vec<Box<FileList>>),
     Dir(PathBuf),
     Alias(String),
+    Empty,
 }
 
 impl FileList {
     pub fn is_empty(&self) -> bool {
-        if let FileList::Files(files) = self {
-            files.is_empty()
-        } else {
-            false
+        match self {
+            FileList::Empty => true,
+            FileList::Files(files) => files.is_empty(),
+            _ => false,
         }
     }
 }
@@ -83,6 +84,12 @@ impl TryFrom<&str> for FileList {
     }
 }
 
+impl Default for FileList {
+    fn default() -> Self {
+        Self::Empty
+    }
+}
+
 impl Into<Vec<FileList>> for FileList {
     fn into(self) -> Vec<FileList> {
         vec![self]
@@ -93,59 +100,4 @@ impl From<Vec<FileList>> for FileList {
     fn from(files: Vec<FileList>) -> Self {
         FileList::Files(files.into_iter().map(|f| Box::new(f)).collect())
     }
-}
-
-pub fn expand_files<'a>(
-    file_list: &'a FileList,
-    aliases: &'a Aliases,
-    settings: &'a ExpandSettings,
-) -> Result<Vec<PathBuf>> {
-    let mut file_paths = Vec::new();
-
-    match &file_list {
-        FileList::File(path) => file_paths.push(path.clone()),
-
-        FileList::Files(files) => {
-            for file in files {
-                file_paths.append(&mut expand_files(&*file, aliases, settings)?)
-            }
-        }
-
-        FileList::Dir(dir_path) => {
-            for file_path_res in dir_path.read_dir().map_err(|e| {
-                Error::FsReadError(
-                    dir_path.as_os_str().to_str().unwrap().to_string(),
-                    e.to_string(),
-                )
-            })? {
-                let file_path = file_path_res
-                    .map_err(|e| {
-                        Error::FsReadError(
-                            dir_path.as_os_str().to_str().unwrap().to_string(),
-                            e.to_string(),
-                        )
-                    })?
-                    .path();
-                if file_path.is_file() {
-                    file_paths.push(file_path)
-                } else if file_path.is_dir() && settings.recurse {
-                    file_paths.append(&mut expand_files(
-                        &FileList::Dir(file_path),
-                        aliases,
-                        settings,
-                    )?)
-                }
-            }
-        }
-
-        FileList::Alias(alias) => file_paths.append(&mut expand_files(
-            aliases
-                .get(&alias)
-                .ok_or(Error::AliasNotFound(alias.to_string()))?,
-            aliases,
-            settings,
-        )?),
-    }
-
-    Ok(file_paths)
 }

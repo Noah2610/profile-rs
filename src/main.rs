@@ -11,6 +11,7 @@ extern crate structopt;
 extern crate toml;
 
 mod config;
+mod context;
 mod error;
 mod file_list;
 mod meta;
@@ -33,25 +34,16 @@ fn main() {
 fn run() -> error::Result<()> {
     use file_list::{expand_files, ExpandSettings};
 
-    let opts = opts::Opts::new();
-    dbg!(&opts);
-
-    let config = config::Config::new()?;
-
-    let files = if !opts.files.is_empty() {
-        opts.files.into()
-    } else if !config.files.default.is_empty() {
-        config.files.default.into()
-    } else {
-        // TODO
-        panic!("TODO");
-    };
+    let context = context::ContextBuilder::default()
+        .opts(opts::Opts::new())
+        .config(config::Config::new()?)
+        .build()?;
 
     let files = expand_files(
-        &files,
-        &config.files.aliases,
+        context.files()?,
+        &context.config.files.aliases,
         &ExpandSettings::builder()
-            .recurse(opts.recurse)
+            .recurse(context.opts.recurse)
             .build()
             .unwrap(),
     )?;

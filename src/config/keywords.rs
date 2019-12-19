@@ -1,6 +1,6 @@
 use regex::Regex;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct KeywordsConfig {
     #[serde(with = "serde_regex")]
     single: Regex,
